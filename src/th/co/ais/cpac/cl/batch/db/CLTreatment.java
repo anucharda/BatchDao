@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import th.co.ais.cpac.cl.batch.ConstantsDB;
 import th.co.ais.cpac.cl.batch.db.CLOrder.CLOrderInfoResponse;
-import th.co.ais.cpac.cl.batch.db.util.DaoUtility;
+import th.co.ais.cpac.cl.batch.util.ValidateUtil;
 import th.co.ais.cpac.cl.common.Context;
 import th.co.ais.cpac.cl.common.UtilityLogger;
 import th.co.ais.cpac.cl.template.database.DBConnectionPools;
@@ -52,7 +52,7 @@ public class CLTreatment {
 			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'").append(ConstantsDB.END_LINE);
 			sql.append(",ACTION_STATUS = ").append(actStatus).append(ConstantsDB.END_LINE);
 			sql.append(", ACTION_STATUS_DTM  = getdate() ").append(ConstantsDB.END_LINE);
-			if(!DaoUtility.isNull(failReason)){
+			if(!ValidateUtil.isNull(failReason)){
 				sql.append(", ACTION_REMARK   ='").append(failReason).append("'").append(ConstantsDB.END_LINE);
 			}
 			sql.append("FROM CL_TREATMENT T ").append(ConstantsDB.END_LINE);
@@ -113,7 +113,7 @@ public class CLTreatment {
 			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'").append(ConstantsDB.END_LINE);
 			sql.append(",ACTION_STATUS = ").append(actStatus).append(ConstantsDB.END_LINE);
 			sql.append(", ACTION_STATUS_DTM  = getdate() ").append(ConstantsDB.END_LINE);
-			if(!DaoUtility.isNull(failReason)){
+			if(!ValidateUtil.isNull(failReason)){
 				sql.append(", ACTION_REMARK   ='").append(failReason).append("'").append(ConstantsDB.END_LINE);
 			}
 			sql.append(" WHERE ACTION_STATUS = 3 ").append(ConstantsDB.END_LINE);
@@ -253,6 +253,55 @@ public class CLTreatment {
 	public ExecuteResponse updateBlackListByBatchIDResult(int actStatus, int actResultStatus, BigDecimal batchID,String actRemark,String username,Context context) throws Exception {
 		ExecuteResponse response= new UpdateTreatmentByBatchIDAction(logger).execute(actStatus, actResultStatus,batchID,actRemark,username);
 		context.getLogger().debug("updateBlackListByBatchIDResult->"+response.info().toString());
+
+		switch(response.getStatusCode()){
+			case CLOrderInfoResponse.STATUS_COMPLETE:{
+				break;
+			}
+			case CLOrderInfoResponse.STATUS_DATA_NOT_FOUND:{
+				break;
+			}
+			default:{
+				throw new Exception("Error : " + response.getErrorMsg());
+			}
+		}
+		
+		return response;
+	}
+	
+	protected class UpdateGenActivityLogResultAction extends DBTemplatesUpdate<ExecuteResponse, UtilityLogger, DBConnectionPools> {
+		private BigDecimal treatmentID;
+		private String username;
+		public UpdateGenActivityLogResultAction(UtilityLogger logger) {
+			super(logger);
+		}
+
+		@Override
+		protected ExecuteResponse createResponse() {
+			return new ExecuteResponse();
+		}
+
+		@Override
+		protected StringBuilder createSqlProcess() {
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE dbo.CL_TREATMENT ").append(ConstantsDB.END_LINE);
+			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'").append(ConstantsDB.END_LINE);
+			sql.append(",ACTIVITY_LOG_BOO ='Y' ").append(ConstantsDB.END_LINE);
+			sql.append("AND TREATMENT_ID = ").append(treatmentID).append(ConstantsDB.END_LINE);
+			return sql;
+		}
+
+
+		protected ExecuteResponse execute(BigDecimal treatmentID,String username) {
+			this.treatmentID = treatmentID;
+			this.username = username;
+			return executeUpdate(ConstantsDB.getDBConnectionPools(logger), true);
+		}
+	}
+	
+	public ExecuteResponse updateGenActivityLogResult(BigDecimal treatmentID,String username,Context context) throws Exception {
+		ExecuteResponse response= new UpdateGenActivityLogResultAction(logger).execute(treatmentID,username);
+		context.getLogger().debug("updateGenActivityLogResult->"+response.info().toString());
 
 		switch(response.getStatusCode()){
 			case CLOrderInfoResponse.STATUS_COMPLETE:{

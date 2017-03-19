@@ -8,7 +8,6 @@ import java.util.Date;
 
 import th.co.ais.cpac.cl.batch.Constants;
 import th.co.ais.cpac.cl.batch.ConstantsDB;
-import th.co.ais.cpac.cl.batch.db.CLOrder.CLBatcInfo;
 import th.co.ais.cpac.cl.common.Context;
 import th.co.ais.cpac.cl.common.UtilityLogger;
 import th.co.ais.cpac.cl.template.database.DBConnectionPools;
@@ -372,6 +371,61 @@ public class CLBatch {
 		return response;
 	}
 
+	protected class UpdateBatchOutboundCompleteAction
+			extends DBTemplatesUpdate<ExecuteResponse, UtilityLogger, DBConnectionPools> {
+		private BigDecimal batchID;
+		private String username;
+
+		public UpdateBatchOutboundCompleteAction(UtilityLogger logger) {
+			super(logger);
+		}
+
+		@Override
+		protected ExecuteResponse createResponse() {
+			return new ExecuteResponse();
+		}
+
+		@Override
+		protected StringBuilder createSqlProcess() {
+			StringBuilder sql = new StringBuilder();
+			sql.append("UPDATE dbo.CL_BATCH ").append(ConstantsDB.END_LINE);
+			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'")
+					.append(ConstantsDB.END_LINE);
+			sql.append(",OUTBOUND_STATUS  = ").append(ConstantsDB.OutboundStatus.Complete).append(ConstantsDB.END_LINE);
+			sql.append(",OUTBOUND _STATUS_DTM  = getdate() ").append(ConstantsDB.END_LINE);
+			sql.append(",BATCH_END_DTM = getdate() ").append(ConstantsDB.END_LINE);
+			sql.append(" WHERE BATCH_ID = ").append(batchID).append(ConstantsDB.END_LINE);
+			return sql;
+		}
+
+		protected ExecuteResponse execute(BigDecimal batchID, String username) {
+			this.batchID = batchID;
+			this.username = username;
+			return executeUpdate(ConstantsDB.getDBConnectionPools(logger), true);
+		}
+	}
+
+	public ExecuteResponse updateOutboundCompleteStatus(BigDecimal batchID, String username, Context context)
+			throws Exception {
+
+		ExecuteResponse response = new UpdateBatchOutboundCompleteAction(logger).execute(batchID, username);
+		context.getLogger().debug("updateOutboundCompleteStatus->" + response.info().toString());
+
+		switch (response.getStatusCode()) {
+		case CLBatchInfoResponse.STATUS_COMPLETE: {
+			break;
+		}
+		case CLBatchInfoResponse.STATUS_DATA_NOT_FOUND: {
+			break;
+		}
+		default: {
+			throw new Exception("Error : " + response.getErrorMsg());
+		}
+		}
+
+		return response;
+	}
+
 	public class CLBatchPathInfo {
 
 		protected CLBatchPathInfo() {
@@ -656,7 +710,6 @@ public class CLBatch {
 			return sql;
 		}
 
-
 		protected ExecuteResponse execute(CLBatchInfo batchInfo) {
 			this.batchInfo = batchInfo;
 			return super.executeUpdateGetIdentity(ConstantsDB.getDBConnectionPools(logger), true);
@@ -667,6 +720,7 @@ public class CLBatch {
 	public CLBatchInfo buildCLBatchInfo() {
 		return new CLBatchInfo();
 	}
+
 	public ExecuteResponse insertCLBatch(CLBatchInfo batchInfo) {
 		return new InsertCLBatchProcess(logger).execute(batchInfo);
 	}
