@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import th.co.ais.cpac.cl.batch.ConstantsDB;
 import th.co.ais.cpac.cl.batch.db.CLOrder.CLOrderInfoResponse;
-import th.co.ais.cpac.cl.batch.util.ValidateUtil;
+import th.co.ais.cpac.cl.batch.db.util.DaoUtility;
 import th.co.ais.cpac.cl.common.Context;
 import th.co.ais.cpac.cl.common.UtilityLogger;
 import th.co.ais.cpac.cl.template.database.DBConnectionPools;
@@ -52,7 +52,7 @@ public class CLTreatment {
 			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'").append(ConstantsDB.END_LINE);
 			sql.append(",ACTION_STATUS = ").append(actStatus).append(ConstantsDB.END_LINE);
 			sql.append(", ACTION_STATUS_DTM  = getdate() ").append(ConstantsDB.END_LINE);
-			if(!ValidateUtil.isNull(failReason)){
+			if(!DaoUtility.isNull(failReason)){
 				sql.append(", ACTION_REMARK   ='").append(failReason).append("'").append(ConstantsDB.END_LINE);
 			}
 			sql.append("FROM CL_TREATMENT T ").append(ConstantsDB.END_LINE);
@@ -113,7 +113,7 @@ public class CLTreatment {
 			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'").append(ConstantsDB.END_LINE);
 			sql.append(",ACTION_STATUS = ").append(actStatus).append(ConstantsDB.END_LINE);
 			sql.append(", ACTION_STATUS_DTM  = getdate() ").append(ConstantsDB.END_LINE);
-			if(!ValidateUtil.isNull(failReason)){
+			if(!DaoUtility.isNull(failReason)){
 				sql.append(", ACTION_REMARK   ='").append(failReason).append("'").append(ConstantsDB.END_LINE);
 			}
 			sql.append(" WHERE ACTION_STATUS = 3 ").append(ConstantsDB.END_LINE);
