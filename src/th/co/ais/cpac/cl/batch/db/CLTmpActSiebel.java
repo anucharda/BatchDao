@@ -198,12 +198,12 @@ public class CLTmpActSiebel {
 
 	}
 
-	protected class GetTmpactSiebelInfoAction
+	protected class GetTmpActSiebelInfoAction
 			extends DBTemplatesExecuteQuery<CLTmpActSiebelResponse, UtilityLogger, DBConnectionPools> {
 		private String processName;
 		private BigDecimal maxRecord;
 
-		public GetTmpactSiebelInfoAction(UtilityLogger logger) {
+		public GetTmpActSiebelInfoAction(UtilityLogger logger) {
 			super(logger);
 		}
 
@@ -251,7 +251,7 @@ public class CLTmpActSiebel {
 	public CLTmpActSiebelResponse getTmpActSiebelInfo(String processName, BigDecimal maxRecord, Context context)
 			throws Exception {
 
-		CLTmpActSiebelResponse response = new GetTmpactSiebelInfoAction(logger).execute(processName, maxRecord);
+		CLTmpActSiebelResponse response = new GetTmpActSiebelInfoAction(logger).execute(processName, maxRecord);
 		context.getLogger().debug("getTmpActSiebelInfo->" + response.info().toString());
 
 		switch (response.getStatusCode()) {
@@ -388,7 +388,7 @@ public class CLTmpActSiebel {
 			StringBuilder column = new StringBuilder();
 			StringBuilder value = new StringBuilder();
 			StringBuilder sql = new StringBuilder();
-			sql.append("INSERT INTO dbo.CL_TMP_ACT_SIEBEL ");
+			sql.append("INSERT INTO dbo.CL_TMP_ACT_SIEBEL(CA_NO, BA_NO, MOBILE_NO, CATEGORY, SUBCATEGORY, ACTION_STATUS_DTTM, TREATMENT_ID, JOB_TYPE, OWNER, WORK_ORDER_ID, GEN_FLAG, GEN_DATETIME) ");
 			sql.append("SELECT B.CA_NO, T.BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA (B.BA_NO) AS REF_MOBILE_NO, B.CATEGORY, B.SUBCATEGORY, T.ACTION_STATUS_DTM, T.TREATMENT_ID, ");
 			sql.append("'Debt - Outbound','DEBT',null, 'N',null");
 			sql.append("FROM CL_TREATMENT T  ");
