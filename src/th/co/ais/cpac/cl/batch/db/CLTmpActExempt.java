@@ -136,7 +136,7 @@ public class CLTmpActExempt {
 
 	public ExecuteResponse truncateExempActLog(Context context) throws Exception {
 		ExecuteResponse response = new TruncateExempActLog(logger).execute();
-		context.getLogger().debug("insertSMSOutBound->" + response.info().toString());
+		context.getLogger().debug("truncateExempActLog->" + response.info().toString());
 
 		switch (response.getStatusCode()) {
 		case CLOrderInfoResponse.STATUS_COMPLETE: {
@@ -153,7 +153,7 @@ public class CLTmpActExempt {
 	}
 
 	protected class InsertExempActLog extends DBTemplatesInsert<ExecuteResponse, UtilityLogger, DBConnectionPools> {
-
+		private BigDecimal batchTypeId;
 		public InsertExempActLog(UtilityLogger logger) {
 			super(logger);
 		}
@@ -188,6 +188,7 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
 			sql.append("AND E.EXEMPT_LEVEL = 4 ");
+			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);
 			sql.append("UNION ");
 			sql.append("SELECT  ");
 			sql.append("E.EXEMPT_CUSTOMER_ID, E.BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(E.BA_NO) AS MOBILE_NO, ");
@@ -206,6 +207,7 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
 			sql.append("AND E.EXEMPT_LEVEL = 3 ");
+			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);
 			sql.append("UNION ");
 			sql.append(
 					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,");
@@ -224,6 +226,7 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
 			sql.append("AND E.EXEMPT_LEVEL = 2 ");
+			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);
 			sql.append("UNION ");
 			sql.append(
 					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,");
@@ -242,30 +245,18 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
 			sql.append("AND E.EXEMPT_LEVEL = 1 ");
-
-			sql.append("INSERT INTO dbo.CL_TMP_ACT_SIEBEL ");
-			sql.append(
-					"SELECT B.CA_NO, S.BA_NO, S.MOBILE_NO, B.CATEGORY, B.SUBCATEGORY, S.ACTION_STATUS_DTM, T.TREATMENT_ID, ");
-			sql.append("'SMS - Outbound','DEBT',null, 'N',null ");
-			sql.append("FROM CL_SMS S ");
-			sql.append("JOIN CL_MESSAGE M on S.MESSAGE_ID=M.MESSAGE_ID ");
-			sql.append("JOIN CL_MESSAGE_TREATMENT MT  on  M.MESSAGE_ID=MT.MESSAGE_ID ");
-			sql.append("JOIN CL_TREATMENT T on MT.TREATMENT_ID=T.TREATMENT_ID ");
-			sql.append("JOIN CL_BA_INFO B on S.BA_NO=B.BA_NO ");
-			sql.append("WHERE S.ACTION_STATUS=4  ");
-			sql.append("AND ACTIVITY_LOG_BOO='N' ");
-			sql.append(
-					"AND CONVERT(varchar(8),S.ACTION_STATUS_DTM,112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
+			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);
 			return sql;
 		}
 
-		protected ExecuteResponse execute() {
+		protected ExecuteResponse execute(BigDecimal batchTypeId) {
+			this.batchTypeId=batchTypeId;
 			return executeUpdate(ConstantsDB.getDBConnectionPools(logger), true);
 		}
 	}
 
-	public ExecuteResponse insertExempActLog(Context context) throws Exception {
-		ExecuteResponse response = new InsertExempActLog(logger).execute();
+	public ExecuteResponse insertExempActLog(Context context,BigDecimal batchTypeId) throws Exception {
+		ExecuteResponse response = new InsertExempActLog(logger).execute(batchTypeId);
 		context.getLogger().debug("InsertExempActLog->" + response.info().toString());
 
 		switch (response.getStatusCode()) {
