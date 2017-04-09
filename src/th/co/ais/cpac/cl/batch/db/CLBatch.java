@@ -389,10 +389,11 @@ public class CLBatch {
 		protected StringBuilder createSqlProcess() {
 			StringBuilder sql = new StringBuilder();
 			sql.append("UPDATE dbo.CL_BATCH ").append(ConstantsDB.END_LINE);
-			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'")
-					.append(ConstantsDB.END_LINE);
-			sql.append(",OUTBOUND_STATUS  = ").append(ConstantsDB.OutboundStatus.Complete).append(ConstantsDB.END_LINE);
-			sql.append(",OUTBOUND _STATUS_DTM  = getdate() ").append(ConstantsDB.END_LINE);
+			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'").append(ConstantsDB.END_LINE);
+			sql.append(",INBOUND_STATUS=1 ").append(ConstantsDB.END_LINE);
+			sql.append(",INBOUND_STATUS_DTM  = getdate() ").append(ConstantsDB.END_LINE);
+			sql.append(",OUTBOUND_STATUS=3 ").append(ConstantsDB.END_LINE);
+			sql.append(",OUTBOUND_STATUS_DTM  = getdate() ").append(ConstantsDB.END_LINE);
 			sql.append(",BATCH_END_DTM = getdate() ").append(ConstantsDB.END_LINE);
 			sql.append(" WHERE BATCH_ID = ").append(batchID).append(ConstantsDB.END_LINE);
 			return sql;

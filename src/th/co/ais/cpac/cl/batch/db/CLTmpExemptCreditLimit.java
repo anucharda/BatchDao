@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import th.co.ais.cpac.cl.batch.ConstantsDB;
 import th.co.ais.cpac.cl.batch.db.CLBatch.CLBatchInfoResponse;
 import th.co.ais.cpac.cl.batch.db.CLOrder.CLOrderInfoResponse;
-import th.co.ais.cpac.cl.batch.db.CLTmpActSiebel.CLTmpActSiebelResponse;
+import th.co.ais.cpac.cl.batch.db.CLTmpActSiebel.CLTmpExemptCreditLimitCountResponse;
 import th.co.ais.cpac.cl.batch.util.Utility;
 import th.co.ais.cpac.cl.common.Context;
 import th.co.ais.cpac.cl.common.UtilityLogger;
@@ -317,10 +317,10 @@ public class CLTmpExemptCreditLimit {
 		context.getLogger().debug("getTmpExemptCreditLimitInfo->" + response.info().toString());
 
 		switch (response.getStatusCode()) {
-		case CLTmpActSiebelResponse.STATUS_COMPLETE: {
+		case CLTmpExemptCreditLimitCountResponse.STATUS_COMPLETE: {
 			break;
 		}
-		case CLTmpActSiebelResponse.STATUS_DATA_NOT_FOUND: {
+		case CLTmpExemptCreditLimitCountResponse.STATUS_DATA_NOT_FOUND: {
 			break;
 		}
 		default: {
@@ -378,5 +378,81 @@ public class CLTmpExemptCreditLimit {
 		}
 
 		return response;
+	}
+	
+	public class CLTmpExemptCreditLimitCount {
+		protected CLTmpExemptCreditLimitCount() {
+		}
+		private int totalRecord;
+		public int getTotalRecord() {
+			return totalRecord;
+		}
+		public void setTotalRecord(int totalRecord) {
+			this.totalRecord = totalRecord;
+		}
+	}
+	public class CLTmpExemptCreditLimitCountResponse extends DBTemplatesResponse<ArrayList<CLTmpExemptCreditLimitCount>> {
+
+		@Override
+		protected ArrayList<CLTmpExemptCreditLimitCount> createResponse() {
+			return new ArrayList<>();
+		}
+
+	}
+
+	protected class GetTmpExemptCreditLimitCountAction
+			extends DBTemplatesExecuteQuery<CLTmpExemptCreditLimitCountResponse, UtilityLogger, DBConnectionPools> {
+
+		public GetTmpExemptCreditLimitCountAction(UtilityLogger logger) {
+			super(logger);
+		}
+
+		@Override
+		protected CLTmpExemptCreditLimitCountResponse createResponse() {
+			return new CLTmpExemptCreditLimitCountResponse();
+		}
+
+		@Override
+		protected StringBuilder createSqlProcess() {
+			StringBuilder sql = new StringBuilder();
+			sql.append(" SELECT COUNT(*) AS CNT ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM CL_TMP_EXEMPT_CREDIT_LIMIT ").append(ConstantsDB.END_LINE);
+			sql.append(" WHERE GEN_FLAG = 'N'").append(ConstantsDB.END_LINE);
+			return sql;
+		}
+
+		@Override
+		protected void setReturnValue(ResultSet resultSet) throws SQLException {
+			CLTmpExemptCreditLimitCount temp = new CLTmpExemptCreditLimitCount();
+			temp.setTotalRecord(resultSet.getInt("CNT"));
+			response.getResponse().add(temp);
+		}
+
+		protected CLTmpExemptCreditLimitCountResponse execute() {
+			return executeQuery(ConstantsDB.getDBConnectionPools(logger), true);
+		}
+	}
+
+	public int getTmpExemptCreditLimitCount(Context context) throws Exception {
+
+		CLTmpExemptCreditLimitCountResponse response = new GetTmpExemptCreditLimitCountAction(logger).execute();
+		context.getLogger().debug("getTmpExemptCreditLimitCount->" + response.info().toString());
+
+		switch (response.getStatusCode()) {
+		case CLTmpExemptCreditLimitCountResponse.STATUS_COMPLETE: {
+			break;
+		}
+		case CLTmpExemptCreditLimitCountResponse.STATUS_DATA_NOT_FOUND: {
+			break;
+		}
+		default: {
+			throw new Exception("Error : " + response.getErrorMsg());
+		}
+		}
+		if(response!=null && response.getResponse()!=null &&response.getResponse().size()>0){
+			return response.getResponse().get(0).getTotalRecord();
+		}else{
+			return 0;
+		}
 	}
 }

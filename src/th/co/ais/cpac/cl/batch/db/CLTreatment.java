@@ -287,7 +287,7 @@ public class CLTreatment {
 			sql.append("UPDATE dbo.CL_TREATMENT ").append(ConstantsDB.END_LINE);
 			sql.append("SET LAST_UPD= getdate() , LAST_UPD_BY='").append(username).append("'").append(ConstantsDB.END_LINE);
 			sql.append(",ACTIVITY_LOG_BOO ='Y' ").append(ConstantsDB.END_LINE);
-			sql.append("AND TREATMENT_ID = ").append(treatmentID).append(ConstantsDB.END_LINE);
+			sql.append("WHERE TREATMENT_ID = ").append(treatmentID).append(ConstantsDB.END_LINE);
 			return sql;
 		}
 

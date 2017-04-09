@@ -154,6 +154,7 @@ public class CLTmpActExempt {
 
 	protected class InsertExempActLog extends DBTemplatesInsert<ExecuteResponse, UtilityLogger, DBConnectionPools> {
 		private BigDecimal batchTypeId;
+
 		public InsertExempActLog(UtilityLogger logger) {
 			super(logger);
 		}
@@ -188,7 +189,9 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
 			sql.append("AND E.EXEMPT_LEVEL = 4 ");
-			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);
+			sql.append(
+					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
+					.append(batchTypeId);
 			sql.append("UNION ");
 			sql.append("SELECT  ");
 			sql.append("E.EXEMPT_CUSTOMER_ID, E.BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(E.BA_NO) AS MOBILE_NO, ");
@@ -207,7 +210,9 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
 			sql.append("AND E.EXEMPT_LEVEL = 3 ");
-			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);
+			sql.append(
+					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
+					.append(batchTypeId);
 			sql.append("UNION ");
 			sql.append(
 					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,");
@@ -226,7 +231,9 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
 			sql.append("AND E.EXEMPT_LEVEL = 2 ");
-			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);
+			sql.append(
+					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
+					.append(batchTypeId);
 			sql.append("UNION ");
 			sql.append(
 					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,");
@@ -245,17 +252,19 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
 			sql.append("AND E.EXEMPT_LEVEL = 1 ");
-			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);
+			sql.append(
+					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
+					.append(batchTypeId);
 			return sql;
 		}
 
 		protected ExecuteResponse execute(BigDecimal batchTypeId) {
-			this.batchTypeId=batchTypeId;
+			this.batchTypeId = batchTypeId;
 			return executeUpdate(ConstantsDB.getDBConnectionPools(logger), true);
 		}
 	}
 
-	public ExecuteResponse insertExempActLog(Context context,BigDecimal batchTypeId) throws Exception {
+	public ExecuteResponse insertExempActLog(Context context, BigDecimal batchTypeId) throws Exception {
 		ExecuteResponse response = new InsertExempActLog(logger).execute(batchTypeId);
 		context.getLogger().debug("InsertExempActLog->" + response.info().toString());
 
@@ -314,7 +323,8 @@ public class CLTmpActExempt {
 			temp.setBaNo(resultSet.getString("BA_NO"));
 			temp.setMobileNo(resultSet.getString("MOBILE_NO"));
 			temp.setMode(resultSet.getString("MODE"));
-			temp.setEffectiveDate(Utility.convertDateToString(resultSet.getDate("EFFECTIVE_DATE"), "ddMMyyyy_hh24mmss"));
+			temp.setEffectiveDate(
+					Utility.convertDateToString(resultSet.getDate("EFFECTIVE_DATE"), "ddMMyyyy_hh24mmss"));
 			temp.setExpireDate(Utility.convertDateToString(resultSet.getDate("EXPIRED_DATE"), "ddMMyyyy_hh24mmss"));
 			response.getResponse().add(temp);
 		}
@@ -373,8 +383,7 @@ public class CLTmpActExempt {
 		}
 	}
 
-	public ExecuteResponse updateGenFileResultComplete(BigDecimal maxRecord, Context context)
-			throws Exception {
+	public ExecuteResponse updateGenFileResultComplete(BigDecimal maxRecord, Context context) throws Exception {
 
 		ExecuteResponse response = new UpdateGenFileResultCompleteAction(logger).execute(maxRecord);
 		context.getLogger().debug("updateGenFileResultComplete->" + response.info().toString());
@@ -392,5 +401,85 @@ public class CLTmpActExempt {
 		}
 
 		return response;
+	}
+
+	public class CLTmpActExemptCount {
+		protected CLTmpActExemptCount() {
+		}
+
+		private int totalRecord;
+
+		public int getTotalRecord() {
+			return totalRecord;
+		}
+
+		public void setTotalRecord(int totalRecord) {
+			this.totalRecord = totalRecord;
+		}
+
+	}
+	public class CLTmpActExemptCountResponse extends DBTemplatesResponse<ArrayList<CLTmpActExemptCount>> {
+
+		@Override
+		protected ArrayList<CLTmpActExemptCount> createResponse() {
+			return new ArrayList<>();
+		}
+
+	}
+
+	protected class GetTmpActExemptCountAction
+			extends DBTemplatesExecuteQuery<CLTmpActExemptCountResponse, UtilityLogger, DBConnectionPools> {
+
+		public GetTmpActExemptCountAction(UtilityLogger logger) {
+			super(logger);
+		}
+
+		@Override
+		protected CLTmpActExemptCountResponse createResponse() {
+			return new CLTmpActExemptCountResponse();
+		}
+
+		@Override
+		protected StringBuilder createSqlProcess() {
+			StringBuilder sql = new StringBuilder();
+			sql.append(" SELECT COUNT(*) AS CNT ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM CL_TMP_ACT_EXEMPT ").append(ConstantsDB.END_LINE);
+			sql.append(" WHERE GEN_FLAG = 'N'").append(ConstantsDB.END_LINE);
+			return sql;
+		}
+
+		@Override
+		protected void setReturnValue(ResultSet resultSet) throws SQLException {
+			CLTmpActExemptCount temp = new CLTmpActExemptCount();
+			temp.setTotalRecord(resultSet.getInt("CNT"));
+			response.getResponse().add(temp);
+		}
+
+		protected CLTmpActExemptCountResponse execute() {
+			return executeQuery(ConstantsDB.getDBConnectionPools(logger), true);
+		}
+	}
+
+	public int getTmpActExemptCount(Context context) throws Exception {
+
+		CLTmpActExemptCountResponse response = new GetTmpActExemptCountAction(logger).execute();
+		context.getLogger().debug("getTmpActExemptCount->" + response.info().toString());
+
+		switch (response.getStatusCode()) {
+		case CLTmpActSiebelResponse.STATUS_COMPLETE: {
+			break;
+		}
+		case CLTmpActSiebelResponse.STATUS_DATA_NOT_FOUND: {
+			break;
+		}
+		default: {
+			throw new Exception("Error : " + response.getErrorMsg());
+		}
+		}
+		if(response!=null && response.getResponse()!=null &&response.getResponse().size()>0){
+			return response.getResponse().get(0).getTotalRecord();
+		}else{
+			return 0;
+		}
 	}
 }

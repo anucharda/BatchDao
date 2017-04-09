@@ -422,4 +422,89 @@ public class CLTmpActSiebel {
 		}
 		return response;
 	}
+	
+	public class CLTmpActSiebelCount {
+		protected CLTmpActSiebelCount() {
+		}
+
+		private int totalRecord;
+
+		public int getTotalRecord() {
+			return totalRecord;
+		}
+
+		public void setTotalRecord(int totalRecord) {
+			this.totalRecord = totalRecord;
+		}
+	}
+	
+
+	public class CLTmpActSiebelCountResponse extends DBTemplatesResponse<ArrayList<CLTmpActSiebelCount>> {
+
+		@Override
+		protected ArrayList<CLTmpActSiebelCount> createResponse() {
+			return new ArrayList<>();
+		}
+
+	}
+	protected class TmpActSiebelCountAction
+			extends DBTemplatesExecuteQuery<CLTmpActSiebelCountResponse, UtilityLogger, DBConnectionPools> {
+		private String processName;
+
+		public TmpActSiebelCountAction(UtilityLogger logger) {
+			super(logger);
+		}
+
+		@Override
+		protected CLTmpActSiebelCountResponse createResponse() {
+			return new CLTmpActSiebelCountResponse();
+		}
+
+		@Override
+		protected StringBuilder createSqlProcess() {
+			StringBuilder sql = new StringBuilder();
+			sql.append(" SELECT COUNT(*) AS CNT ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM CL_TMP_ACT_SIEBEL ").append(ConstantsDB.END_LINE);
+			sql.append(" WHERE JOB_TYPE = ('").append(processName).append("') ").append(ConstantsDB.END_LINE);
+			sql.append(" and GEN_FLAG = 'N'").append(ConstantsDB.END_LINE);
+			return sql;
+		}
+
+		@Override
+		protected void setReturnValue(ResultSet resultSet) throws SQLException {
+			CLTmpActSiebelCount temp = new CLTmpActSiebelCount();
+			temp.setTotalRecord(resultSet.getInt("CNT"));
+			response.getResponse().add(temp);
+		}
+
+		protected CLTmpActSiebelCountResponse execute(String processName) {
+			this.processName = processName;
+			return executeQuery(ConstantsDB.getDBConnectionPools(logger), true);
+		}
+	}
+
+	public int countTmpActSiebel(String processName, Context context)
+			throws Exception {
+
+		CLTmpActSiebelCountResponse response = new TmpActSiebelCountAction(logger).execute(processName);
+		context.getLogger().debug("countTmpActSiebel->" + response.info().toString());
+
+		switch (response.getStatusCode()) {
+		case CLTmpActSiebelResponse.STATUS_COMPLETE: {
+			break;
+		}
+		case CLTmpActSiebelResponse.STATUS_DATA_NOT_FOUND: {
+			break;
+		}
+		default: {
+			throw new Exception("Error : " + response.getErrorMsg());
+		}
+		}
+		if(response!=null && response.getResponse()!=null &&response.getResponse().size()>0){
+			return response.getResponse().get(0).getTotalRecord();
+		}else{
+			return 0;
+		}
+	}
+
 }

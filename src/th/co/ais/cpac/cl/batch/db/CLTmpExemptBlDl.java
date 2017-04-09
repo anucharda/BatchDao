@@ -6,9 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import th.co.ais.cpac.cl.batch.ConstantsDB;
-import th.co.ais.cpac.cl.batch.db.CLBatch.CLBatchInfoResponse;
 import th.co.ais.cpac.cl.batch.db.CLOrder.CLOrderInfoResponse;
-import th.co.ais.cpac.cl.batch.db.CLTmpActSiebel.CLTmpActSiebelResponse;
 import th.co.ais.cpac.cl.batch.util.Utility;
 import th.co.ais.cpac.cl.common.Context;
 import th.co.ais.cpac.cl.common.UtilityLogger;
@@ -41,6 +39,7 @@ public class CLTmpExemptBlDl {
 	public class CLTmpExemptBlDlInfo {
 		protected CLTmpExemptBlDlInfo() {
 		}
+
 		private BigDecimal tmpId;
 		private BigDecimal exemptCustomerId;
 		private String caNo;
@@ -55,91 +54,118 @@ public class CLTmpExemptBlDl {
 		private int duration;
 		private String locationCode;
 		private String reason;
+
 		public BigDecimal getTmpId() {
 			return tmpId;
 		}
+
 		public void setTmpId(BigDecimal tmpId) {
 			this.tmpId = tmpId;
 		}
+
 		public BigDecimal getExemptCustomerId() {
 			return exemptCustomerId;
 		}
+
 		public void setExemptCustomerId(BigDecimal exemptCustomerId) {
 			this.exemptCustomerId = exemptCustomerId;
 		}
+
 		public String getCaNo() {
 			return caNo;
 		}
+
 		public void setCaNo(String caNo) {
 			this.caNo = caNo;
 		}
+
 		public String getBaNo() {
 			return baNo;
 		}
+
 		public void setBaNo(String baNo) {
 			this.baNo = baNo;
 		}
+
 		public String getMobileNo() {
 			return mobileNo;
 		}
+
 		public void setMobileNo(String mobileNo) {
 			this.mobileNo = mobileNo;
 		}
+
 		public String getExemptMode() {
 			return exemptMode;
 		}
+
 		public void setExemptMode(String exemptMode) {
 			this.exemptMode = exemptMode;
 		}
+
 		public String getExemptLevel() {
 			return exemptLevel;
 		}
+
 		public void setExemptLevel(String exemptLevel) {
 			this.exemptLevel = exemptLevel;
 		}
+
 		public String getChannel() {
 			return channel;
 		}
+
 		public void setChannel(String channel) {
 			this.channel = channel;
 		}
+
 		public String getEffectiveDate() {
 			return effectiveDate;
 		}
+
 		public void setEffectiveDate(String effectiveDate) {
 			this.effectiveDate = effectiveDate;
 		}
+
 		public String getEndDate() {
 			return endDate;
 		}
+
 		public void setEndDate(String endDate) {
 			this.endDate = endDate;
 		}
+
 		public String getExpireDate() {
 			return expireDate;
 		}
+
 		public void setExpireDate(String expireDate) {
 			this.expireDate = expireDate;
 		}
+
 		public int getDuration() {
 			return duration;
 		}
+
 		public void setDuration(int duration) {
 			this.duration = duration;
 		}
+
 		public String getLocationCode() {
 			return locationCode;
 		}
+
 		public void setLocationCode(String locationCode) {
 			this.locationCode = locationCode;
 		}
+
 		public String getReason() {
 			return reason;
 		}
+
 		public void setReason(String reason) {
 			this.reason = reason;
 		}
-
 
 	}
 
@@ -187,6 +213,7 @@ public class CLTmpExemptBlDl {
 
 	protected class InsertExempBlDl extends DBTemplatesInsert<ExecuteResponse, UtilityLogger, DBConnectionPools> {
 		BigDecimal batchTypeId;
+
 		public InsertExempBlDl(UtilityLogger logger) {
 			super(logger);
 		}
@@ -205,26 +232,34 @@ public class CLTmpExemptBlDl {
 
 			sql.append(
 					"INSERT INTO CL_TMP_EXEMPT_BL_DL(EXEMPT_CUSTOMER_ID, CA_NO, BA_NO, MOBILE_NO, EXEMPT_MODE, EXEMPT_LEVEL, CHANNEL, EFFECTIVE_DATE, END_DATE, EXPIRED_DATE, DURATION, LOCATION_CODE, REASON, WORK_ORDER_ID, GEN_FLAG, GEN_DATETIME) ");
-			sql.append("SELECT E.EXEMPT_CUSTOMER_ID, E.CA_NO,ISNULL(E.BA_NO,'') AS BA_NO,ISNULL(E.MOBILE_NO,'') AS MOBILE_NO, ");
+			sql.append(
+					"SELECT E.EXEMPT_CUSTOMER_ID, E.CA_NO,ISNULL(E.BA_NO,'') AS BA_NO,ISNULL(E.MOBILE_NO,'') AS MOBILE_NO, ");
 			sql.append("CASE WHEN E.ACTION_ID = 0 ");
-			sql.append("THEN (SELECT L.CONDITION_4 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ");			
-			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) END AS MODE, ");			
-			sql.append("CASE E.EXEMPT_LEVEL WHEN 4 THEN 'Mobile' WHEN 3 THEN 'BA' WHEN 2 THEN 'SA' WHEN 1 THEN 'CA' END AS EXEMP_LEVEL, ");			
-			sql.append("'Collection' AS CHANNEL, ");	
-			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE, ");				
-			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS END_DATE, ");	
-			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE, ");	
-			sql.append("DATEDIFF(dd,ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM), ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM)) as DURATION, ");				
-			sql.append("ISNULL(ISNULL(T.APPROVED_LOCATION,T.CREATED_LOCATION),T.LAST_UPD_LOCATION) as LOCATION, ");				
-			sql.append("(SELECT SUBSTRING(REASON_NAME,1,30) FROM CL_REASON R WHERE T.EXEMPT_REASON_ID=R.REASON_ID) as REASON ");				
-			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ");	
-			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ");	
-			sql.append("AND T.EXEMPT_STATUS = 1 ");				
-			sql.append("AND E.EXEMPT_STATUS = 1 ");	
-			sql.append("AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112)  ");				
-			sql.append("AND (E.ACTION_MODE = 10 or E.ACTION_MODE = 11)  ");				
-			sql.append("AND E.EXEMPT_LEVEL !=2 ");				
-			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);	
+			sql.append(
+					"THEN (SELECT L.CONDITION_4 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ");
+			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) END AS MODE, ");
+			sql.append(
+					"CASE E.EXEMPT_LEVEL WHEN 4 THEN 'Mobile' WHEN 3 THEN 'BA' WHEN 2 THEN 'SA' WHEN 1 THEN 'CA' END AS EXEMP_LEVEL, ");
+			sql.append("'Collection' AS CHANNEL, ");
+			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE, ");
+			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS END_DATE, ");
+			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE, ");
+			sql.append(
+					"DATEDIFF(dd,ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM), ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM)) as DURATION, ");
+			sql.append("ISNULL(ISNULL(T.APPROVED_LOCATION,T.CREATED_LOCATION),T.LAST_UPD_LOCATION) as LOCATION, ");
+			sql.append(
+					"(SELECT SUBSTRING(REASON_NAME,1,30) FROM CL_REASON R WHERE T.EXEMPT_REASON_ID=R.REASON_ID) as REASON ");
+			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ");
+			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ");
+			sql.append("AND T.EXEMPT_STATUS = 1 ");
+			sql.append("AND E.EXEMPT_STATUS = 1 ");
+			sql.append(
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112)  ");
+			sql.append("AND (E.ACTION_MODE = 10 or E.ACTION_MODE = 11)  ");
+			sql.append("AND E.EXEMPT_LEVEL !=2 ");
+			sql.append(
+					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
+					.append(batchTypeId);
 			return sql;
 		}
 
@@ -234,7 +269,7 @@ public class CLTmpExemptBlDl {
 		}
 	}
 
-	public ExecuteResponse insertExempBlDl(Context context,BigDecimal batchTypeId) throws Exception {
+	public ExecuteResponse insertExempBlDl(Context context, BigDecimal batchTypeId) throws Exception {
 		ExecuteResponse response = new InsertExempBlDl(logger).execute(batchTypeId);
 		context.getLogger().debug("insertExempBlDl->" + response.info().toString());
 
@@ -278,7 +313,8 @@ public class CLTmpExemptBlDl {
 		protected StringBuilder createSqlProcess() {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT TOP ").append(maxRecord).append(ConstantsDB.END_LINE);
-			sql.append(" EXEMPT_CUSTOMER_ID, CA_NO, BA_NO, MOBILE_NO, EXEMPT_MODE, EXEMPT_LEVEL, CHANNEL, EFFECTIVE_DATE, END_DATE, EXPIRED_DATE, DURATION, LOCATION_CODE, REASON ")
+			sql.append(
+					" EXEMPT_CUSTOMER_ID, CA_NO, BA_NO, MOBILE_NO, EXEMPT_MODE, EXEMPT_LEVEL, CHANNEL, EFFECTIVE_DATE, END_DATE, EXPIRED_DATE, DURATION, LOCATION_CODE, REASON ")
 					.append(ConstantsDB.END_LINE);
 			sql.append(" FROM CL_TMP_EXEMPT_BL_DL ").append(ConstantsDB.END_LINE);
 			sql.append(" WHERE GEN_FLAG = 'N'").append(ConstantsDB.END_LINE);
@@ -317,10 +353,10 @@ public class CLTmpExemptBlDl {
 		context.getLogger().debug("getTmpExemptBLDlInfo->" + response.info().toString());
 
 		switch (response.getStatusCode()) {
-		case CLTmpActSiebelResponse.STATUS_COMPLETE: {
+		case CLTmpExemptBLDlResponse.STATUS_COMPLETE: {
 			break;
 		}
-		case CLTmpActSiebelResponse.STATUS_DATA_NOT_FOUND: {
+		case CLTmpExemptBLDlResponse.STATUS_DATA_NOT_FOUND: {
 			break;
 		}
 		default: {
@@ -359,17 +395,16 @@ public class CLTmpExemptBlDl {
 		}
 	}
 
-	public ExecuteResponse updateGenFileResultComplete(BigDecimal maxRecord, Context context)
-			throws Exception {
+	public ExecuteResponse updateGenFileResultComplete(BigDecimal maxRecord, Context context) throws Exception {
 
 		ExecuteResponse response = new UpdateGenFileResultCompleteAction(logger).execute(maxRecord);
 		context.getLogger().debug("updateGenFileResultComplete->" + response.info().toString());
 
 		switch (response.getStatusCode()) {
-		case CLBatchInfoResponse.STATUS_COMPLETE: {
+		case CLTmpExemptBLDlResponse.STATUS_COMPLETE: {
 			break;
 		}
-		case CLBatchInfoResponse.STATUS_DATA_NOT_FOUND: {
+		case CLTmpExemptBLDlResponse.STATUS_DATA_NOT_FOUND: {
 			break;
 		}
 		default: {
@@ -378,5 +413,86 @@ public class CLTmpExemptBlDl {
 		}
 
 		return response;
+	}
+
+	public class CLTmpExemptBlDlCount {
+		protected CLTmpExemptBlDlCount() {
+		}
+
+		private int totalRecord;
+
+		public int getTotalRecord() {
+			return totalRecord;
+		}
+
+		public void setTotalRecord(int totalRecord) {
+			this.totalRecord = totalRecord;
+		}
+
+	}
+
+	public class CLTmpExemptBLDlCountResponse extends DBTemplatesResponse<ArrayList<CLTmpExemptBlDlCount>> {
+
+		@Override
+		protected ArrayList<CLTmpExemptBlDlCount> createResponse() {
+			return new ArrayList<>();
+		}
+
+	}
+
+	protected class GetTmpExemptBlDlCountAction
+			extends DBTemplatesExecuteQuery<CLTmpExemptBLDlCountResponse, UtilityLogger, DBConnectionPools> {
+
+		public GetTmpExemptBlDlCountAction(UtilityLogger logger) {
+			super(logger);
+		}
+
+		@Override
+		protected CLTmpExemptBLDlCountResponse createResponse() {
+			return new CLTmpExemptBLDlCountResponse();
+		}
+
+		@Override
+		protected StringBuilder createSqlProcess() {
+			StringBuilder sql = new StringBuilder();
+			sql.append(" SELECT COUNT(*) AS CNT ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM CL_TMP_EXEMPT_BL_DL ").append(ConstantsDB.END_LINE);
+			sql.append(" WHERE GEN_FLAG = 'N'").append(ConstantsDB.END_LINE);
+			return sql;
+		}
+
+		@Override
+		protected void setReturnValue(ResultSet resultSet) throws SQLException {
+			CLTmpExemptBlDlCount temp = new CLTmpExemptBlDlCount();
+			temp.setTotalRecord(resultSet.getInt("CNT"));
+			response.getResponse().add(temp);
+		}
+
+		protected CLTmpExemptBLDlCountResponse execute() {
+			return executeQuery(ConstantsDB.getDBConnectionPools(logger), true);
+		}
+	}
+
+	public int getTmpExemptBLDlCount(Context context) throws Exception {
+
+		CLTmpExemptBLDlCountResponse response = new GetTmpExemptBlDlCountAction(logger).execute();
+		context.getLogger().debug("getTmpExemptBLDlCount->" + response.info().toString());
+
+		switch (response.getStatusCode()) {
+		case CLTmpExemptBLDlResponse.STATUS_COMPLETE: {
+			break;
+		}
+		case CLTmpExemptBLDlResponse.STATUS_DATA_NOT_FOUND: {
+			break;
+		}
+		default: {
+			throw new Exception("Error : " + response.getErrorMsg());
+		}
+		}
+		if(response!=null && response.getResponse()!=null &&response.getResponse().size()>0){
+			return response.getResponse().get(0).getTotalRecord();
+		}else{
+			return 0;
+		}
 	}
 }
