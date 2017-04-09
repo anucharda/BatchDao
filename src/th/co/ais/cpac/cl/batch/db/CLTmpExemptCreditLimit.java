@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import th.co.ais.cpac.cl.batch.ConstantsDB;
 import th.co.ais.cpac.cl.batch.db.CLBatch.CLBatchInfoResponse;
 import th.co.ais.cpac.cl.batch.db.CLOrder.CLOrderInfoResponse;
-import th.co.ais.cpac.cl.batch.db.CLTmpActSiebel.CLTmpExemptCreditLimitCountResponse;
 import th.co.ais.cpac.cl.batch.util.Utility;
 import th.co.ais.cpac.cl.common.Context;
 import th.co.ais.cpac.cl.common.UtilityLogger;
@@ -216,7 +215,8 @@ public class CLTmpExemptCreditLimit {
 			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE, ");	
 			sql.append("DATEDIFF(dd,ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM), ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM)) as DURATION, ");				
 			sql.append("ISNULL(ISNULL(T.APPROVED_LOCATION,T.CREATED_LOCATION),T.LAST_UPD_LOCATION) as LOCATION, ");				
-			sql.append("(SELECT SUBSTRING(REASON_NAME,1,30) FROM CL_REASON R WHERE T.EXEMPT_REASON_ID=R.REASON_ID) as REASON ");				
+			sql.append("(SELECT SUBSTRING(REASON_NAME,1,30) FROM CL_REASON R WHERE T.EXEMPT_REASON_ID=R.REASON_ID) as REASON, ");	
+			sql.append("null,'N' ,null ");
 			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ");	
 			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ");	
 			sql.append("AND T.EXEMPT_STATUS = 1 ");				
@@ -224,7 +224,7 @@ public class CLTmpExemptCreditLimit {
 			sql.append("AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112)  ");				
 			sql.append("AND (E.ACTION_MODE = 13)  ");				
 			sql.append("AND E.EXEMPT_LEVEL !=2 ");				
-			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId);	
+			sql.append("AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =").append(batchTypeId).append(")");;
 			return sql;
 		}
 

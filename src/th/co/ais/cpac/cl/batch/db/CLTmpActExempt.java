@@ -172,89 +172,89 @@ public class CLTmpActExempt {
 			StringBuilder sql = new StringBuilder();
 
 			sql.append(
-					"INSERT INTO CL_TMP_ACT_EXEMPT( EXEMPT_CUSTOMER_ID, BA_NO, MOBILE_NO, MODE, EFFECTIVE_DATE, EXPIRED_DATE, WORK_ORDER_ID, GEN_FLAG, GEN_DATETIME) ");
-			sql.append("SELECT E.EXEMPT_CUSTOMER_ID, E.BA_NO, E.MOBILE_NO,");
-			sql.append("CASE WHEN E.ACTION_ID = 0 ");
+					"INSERT INTO CL_TMP_ACT_EXEMPT( EXEMPT_CUSTOMER_ID, BA_NO, MOBILE_NO, MODE, EFFECTIVE_DATE, EXPIRED_DATE, WORK_ORDER_ID, GEN_FLAG, GEN_DATETIME) ").append(ConstantsDB.END_LINE);
+			sql.append("SELECT E.EXEMPT_CUSTOMER_ID, E.BA_NO, E.MOBILE_NO,").append(ConstantsDB.END_LINE);
+			sql.append("CASE WHEN E.ACTION_ID = 0 ").append(ConstantsDB.END_LINE);
 			sql.append(
-					"THEN (SELECT L.CONDITION_3 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ");
-			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) ");
-			sql.append("END AS MODE, ");
-			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE, ");
-			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE, ");
-			sql.append("null,'N' ,null");
-			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ");
-			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ");
-			sql.append("AND T.EXEMPT_STATUS = 1 ");
-			sql.append("AND E.EXEMPT_STATUS = 1 ");
+					"THEN (SELECT L.CONDITION_3 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ").append(ConstantsDB.END_LINE);
+			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) ").append(ConstantsDB.END_LINE);
+			sql.append("END AS MODE, ").append(ConstantsDB.END_LINE);
+			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE, ").append(ConstantsDB.END_LINE);
+			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE, ").append(ConstantsDB.END_LINE);
+			sql.append("null,'N' ,null ").append(ConstantsDB.END_LINE);
+			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ").append(ConstantsDB.END_LINE);
+			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ").append(ConstantsDB.END_LINE);
+			sql.append("AND T.EXEMPT_STATUS = 1 ").append(ConstantsDB.END_LINE);
+			sql.append("AND E.EXEMPT_STATUS = 1 ").append(ConstantsDB.END_LINE);
 			sql.append(
-					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
-			sql.append("AND E.EXEMPT_LEVEL = 4 ");
-			sql.append(
-					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
-					.append(batchTypeId);
-			sql.append("UNION ");
-			sql.append("SELECT  ");
-			sql.append("E.EXEMPT_CUSTOMER_ID, E.BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(E.BA_NO) AS MOBILE_NO, ");
-			sql.append("CASE WHEN E.ACTION_ID = 0 ");
-			sql.append(
-					"THEN (SELECT L.CONDITION_3 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ");
-			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) ");
-			sql.append("END AS MODE, ");
-			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE,  ");
-			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE, ");
-			sql.append("null,'N' ,null ");
-			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ");
-			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ");
-			sql.append("AND T.EXEMPT_STATUS = 1 ");
-			sql.append("AND E.EXEMPT_STATUS = 1 ");
-			sql.append(
-					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
-			sql.append("AND E.EXEMPT_LEVEL = 3 ");
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ").append(ConstantsDB.END_LINE);
+			sql.append("AND E.EXEMPT_LEVEL = 4 ").append(ConstantsDB.END_LINE);
 			sql.append(
 					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
-					.append(batchTypeId);
-			sql.append("UNION ");
+					.append(batchTypeId).append(")").append(ConstantsDB.END_LINE);
+			sql.append(" UNION ").append(ConstantsDB.END_LINE);
+			sql.append("SELECT  ").append(ConstantsDB.END_LINE);
+			sql.append("E.EXEMPT_CUSTOMER_ID, E.BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(E.BA_NO) AS MOBILE_NO, ").append(ConstantsDB.END_LINE);
+			sql.append("CASE WHEN E.ACTION_ID = 0 ").append(ConstantsDB.END_LINE);
 			sql.append(
-					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,");
-			sql.append("CASE WHEN E.ACTION_ID = 0 ");
+					"THEN (SELECT L.CONDITION_3 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ").append(ConstantsDB.END_LINE);
+			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) ").append(ConstantsDB.END_LINE);
+			sql.append("END AS MODE, ").append(ConstantsDB.END_LINE);
+			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE,  ").append(ConstantsDB.END_LINE);
+			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE, ").append(ConstantsDB.END_LINE);
+			sql.append("null,'N' ,null ").append(ConstantsDB.END_LINE);
+			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ").append(ConstantsDB.END_LINE);
+			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ").append(ConstantsDB.END_LINE);
+			sql.append("AND T.EXEMPT_STATUS = 1 ").append(ConstantsDB.END_LINE);
+			sql.append("AND E.EXEMPT_STATUS = 1 ").append(ConstantsDB.END_LINE);
 			sql.append(
-					"THEN (SELECT L.CONDITION_3 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ");
-			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) END AS MODE,");
-			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE,");
-			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE,");
-			sql.append("null,'N' ,null ");
-			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ");
-			sql.append("JOIN CL_BA_INFO B ON E.SA_NO = B.SA_NO ");
-			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ");
-			sql.append("AND T.EXEMPT_STATUS = 1 ");
-			sql.append("AND E.EXEMPT_STATUS = 1 ");
-			sql.append(
-					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
-			sql.append("AND E.EXEMPT_LEVEL = 2 ");
-			sql.append(
-					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
-					.append(batchTypeId);
-			sql.append("UNION ");
-			sql.append(
-					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,");
-			sql.append("CASE WHEN E.ACTION_ID = 0 ");
-			sql.append(
-					"THEN (SELECT L.CONDITION_3 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ");
-			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) END AS MODE,");
-			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE,");
-			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE,");
-			sql.append("null,'N' ,null ");
-			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ");
-			sql.append("JOIN CL_BA_INFO B ON E.CA_NO = B.CA_NO ");
-			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ");
-			sql.append("AND T.EXEMPT_STATUS = 1 ");
-			sql.append("AND E.EXEMPT_STATUS = 1 ");
-			sql.append(
-					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
-			sql.append("AND E.EXEMPT_LEVEL = 1 ");
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ").append(ConstantsDB.END_LINE);
+			sql.append("AND E.EXEMPT_LEVEL = 3 ").append(ConstantsDB.END_LINE);
 			sql.append(
 					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
-					.append(batchTypeId);
+					.append(batchTypeId).append(")").append(ConstantsDB.END_LINE);
+			sql.append(" UNION ");
+			sql.append(
+					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,").append(ConstantsDB.END_LINE);
+			sql.append("CASE WHEN E.ACTION_ID = 0 ").append(ConstantsDB.END_LINE);
+			sql.append(
+					"THEN (SELECT L.CONDITION_3 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ").append(ConstantsDB.END_LINE);
+			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) END AS MODE,").append(ConstantsDB.END_LINE);
+			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE,").append(ConstantsDB.END_LINE);
+			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE,").append(ConstantsDB.END_LINE);
+			sql.append("null,'N' ,null ").append(ConstantsDB.END_LINE);
+			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ").append(ConstantsDB.END_LINE);
+			sql.append("JOIN CL_BA_INFO B ON E.SA_NO = B.SA_NO ").append(ConstantsDB.END_LINE);
+			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ").append(ConstantsDB.END_LINE);
+			sql.append("AND T.EXEMPT_STATUS = 1 ").append(ConstantsDB.END_LINE);
+			sql.append("AND E.EXEMPT_STATUS = 1 ").append(ConstantsDB.END_LINE);
+			sql.append(
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ");
+			sql.append("AND E.EXEMPT_LEVEL = 2 ").append(ConstantsDB.END_LINE);
+			sql.append(
+					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
+					.append(batchTypeId).append(")").append(ConstantsDB.END_LINE);
+			sql.append(" UNION ").append(ConstantsDB.END_LINE);
+			sql.append(
+					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,").append(ConstantsDB.END_LINE);
+			sql.append("CASE WHEN E.ACTION_ID = 0 ").append(ConstantsDB.END_LINE);
+			sql.append(
+					"THEN (SELECT L.CONDITION_3 FROM CL_CFG_LOV L WHERE L.LOV_KEYWORD = 'ACTION_MODE' AND L.LOV_KEYVALUE = E.ACTION_MODE) ").append(ConstantsDB.END_LINE);
+			sql.append("ELSE (SELECT A.ACTION_ABRV FROM CL_ACTION A WHERE A.ACTION_ID = E.ACTION_ID) END AS MODE,").append(ConstantsDB.END_LINE);
+			sql.append("ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM) AS EFFECTIVE_DATE,").append(ConstantsDB.END_LINE);
+			sql.append("ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM) AS EXPIRED_DATE,").append(ConstantsDB.END_LINE);
+			sql.append("null,'N' ,null ").append(ConstantsDB.END_LINE);
+			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ").append(ConstantsDB.END_LINE);
+			sql.append("JOIN CL_BA_INFO B ON E.CA_NO = B.CA_NO ").append(ConstantsDB.END_LINE);
+			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ").append(ConstantsDB.END_LINE);
+			sql.append("AND T.EXEMPT_STATUS = 1 ").append(ConstantsDB.END_LINE);
+			sql.append("AND E.EXEMPT_STATUS = 1 ").append(ConstantsDB.END_LINE);
+			sql.append(
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_APPRV_DTM,E.CREATED),112)=CONVERT(varchar(8),DATEADD(day,-1,getdate()),112) ").append(ConstantsDB.END_LINE);
+			sql.append("AND E.EXEMPT_LEVEL = 1 ").append(ConstantsDB.END_LINE);
+			sql.append(
+					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
+					.append(batchTypeId).append(")").append(ConstantsDB.END_LINE);
 			return sql;
 		}
 
@@ -324,8 +324,8 @@ public class CLTmpActExempt {
 			temp.setMobileNo(resultSet.getString("MOBILE_NO"));
 			temp.setMode(resultSet.getString("MODE"));
 			temp.setEffectiveDate(
-					Utility.convertDateToString(resultSet.getDate("EFFECTIVE_DATE"), "ddMMyyyy_hh24mmss"));
-			temp.setExpireDate(Utility.convertDateToString(resultSet.getDate("EXPIRED_DATE"), "ddMMyyyy_hh24mmss"));
+					Utility.convertDateToString(resultSet.getDate("EFFECTIVE_DATE"), "ddMMyyyy_HHmmss"));
+			temp.setExpireDate(Utility.convertDateToString(resultSet.getDate("EXPIRED_DATE"), "ddMMyyyy_HHmmss"));
 			response.getResponse().add(temp);
 		}
 

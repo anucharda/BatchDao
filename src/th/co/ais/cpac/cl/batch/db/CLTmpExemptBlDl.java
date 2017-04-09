@@ -247,8 +247,8 @@ public class CLTmpExemptBlDl {
 			sql.append(
 					"DATEDIFF(dd,ISNULL(E.EXEMPT_APPRV_DTM, E.EXEMPT_START_DTM), ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM)) as DURATION, ");
 			sql.append("ISNULL(ISNULL(T.APPROVED_LOCATION,T.CREATED_LOCATION),T.LAST_UPD_LOCATION) as LOCATION, ");
-			sql.append(
-					"(SELECT SUBSTRING(REASON_NAME,1,30) FROM CL_REASON R WHERE T.EXEMPT_REASON_ID=R.REASON_ID) as REASON ");
+			sql.append("(SELECT SUBSTRING(REASON_NAME,1,30) FROM CL_REASON R WHERE T.EXEMPT_REASON_ID=R.REASON_ID) as REASON, ");
+			sql.append("null,'N' ,null ");
 			sql.append("FROM CL_EXEMPT T, CL_EXEMPT_CUSTOMER E ");
 			sql.append("WHERE T.EXEMPT_ID = E.EXEMPT_ID ");
 			sql.append("AND T.EXEMPT_STATUS = 1 ");
@@ -259,7 +259,7 @@ public class CLTmpExemptBlDl {
 			sql.append("AND E.EXEMPT_LEVEL !=2 ");
 			sql.append(
 					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
-					.append(batchTypeId);
+					.append(batchTypeId).append(")");
 			return sql;
 		}
 
