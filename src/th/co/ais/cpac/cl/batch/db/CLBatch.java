@@ -523,8 +523,20 @@ public class CLBatch {
 
 	}
 
-	public CLBatchPathResponse getCLBatchPath(BigDecimal batchTypeId, int environment) {
-		return new GetCLBatchPath(logger).execute(batchTypeId, environment);
+	public CLBatchPathResponse getCLBatchPath(BigDecimal batchTypeId, int environment) throws Exception {
+		CLBatchPathResponse response=new GetCLBatchPath(logger).execute(batchTypeId, environment);
+		switch (response.getStatusCode()) {
+		case CLBatchInfoResponse.STATUS_COMPLETE: {
+			break;
+		}
+		case CLBatchInfoResponse.STATUS_DATA_NOT_FOUND: {
+			break;
+		}
+		default: {
+			throw new Exception("Error : " + response.getErrorMsg());
+		}
+		}
+		return response;
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="Get CL_BATCH_VERSION Info">

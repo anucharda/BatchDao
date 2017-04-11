@@ -278,7 +278,7 @@ public class CLTmpExemptCreditLimit {
 		protected StringBuilder createSqlProcess() {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT TOP ").append(maxRecord).append(ConstantsDB.END_LINE);
-			sql.append(" EXEMPT_CUSTOMER_ID, CA_NO, BA_NO, MOBILE_NO, EXEMPT_MODE, EXEMPT_LEVEL, CHANNEL, EFFECTIVE_DATE, END_DATE, EXPIRED_DATE, DURATION, LOCATION_CODE, REASON ")
+			sql.append(" TMP_ID,EXEMPT_CUSTOMER_ID, CA_NO, BA_NO, MOBILE_NO, EXEMPT_MODE, EXEMPT_LEVEL, CHANNEL, EFFECTIVE_DATE, END_DATE, EXPIRED_DATE, DURATION, LOCATION_CODE, REASON ")
 					.append(ConstantsDB.END_LINE);
 			sql.append(" FROM CL_TMP_EXEMPT_CREDIT_LIMIT ").append(ConstantsDB.END_LINE);
 			sql.append(" WHERE GEN_FLAG = 'N'").append(ConstantsDB.END_LINE);
