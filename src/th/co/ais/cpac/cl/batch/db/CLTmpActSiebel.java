@@ -234,7 +234,7 @@ public class CLTmpActSiebel {
 			temp.setMobileNo(resultSet.getString("MOBILE_NO"));
 			temp.setCategory(resultSet.getString("CATEGORY"));
 			temp.setSubcateory(resultSet.getString("SUBCATEGORY"));
-			temp.setActionStatusDtm(Utility.convertDateToString(resultSet.getDate("ACTION_STATUS_DTTM"), "ddMMyyyy_HHmmss"));
+			temp.setActionStatusDtm(Utility.convertDateToString(resultSet.getTimestamp("ACTION_STATUS_DTTM"), "ddMMyyyy_HHmmss"));
 			temp.setTreatmentId(resultSet.getBigDecimal("TREATMENT_ID"));
 			temp.setJobType(resultSet.getString("JOB_TYPE"));
 			temp.setOwner(resultSet.getString("OWNER"));
@@ -339,7 +339,7 @@ public class CLTmpActSiebel {
 			StringBuilder sql = new StringBuilder();
 			sql.append("INSERT INTO dbo.CL_TMP_ACT_SIEBEL ");
 			sql.append("SELECT B.CA_NO, T.BA_NO,isnull(dbo.CL_F_GET_MOBILE_REF_BY_BA (B.BA_NO),'') AS REF_MOBILE_NO, B.CATEGORY, B.SUBCATEGORY, T.ACTION_STATUS_DTM, T.TREATMENT_ID, ");
-			sql.append("'Letter – Outbound','DEBT',null, 'N',null ");
+			sql.append("'Letter - Outbound','DEBT',null, 'N',null ");
 			sql.append("FROM CL_TREATMENT T  ");
 			sql.append("JOIN CL_ACTION A on T.ACTION_ID=A.ACTION_ID and ACTION_MODE =5 ");
 			sql.append("JOIN CL_BA_INFO B on T.BA_NO=B.BA_NO ");

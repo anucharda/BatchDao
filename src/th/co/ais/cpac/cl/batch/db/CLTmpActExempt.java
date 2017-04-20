@@ -324,8 +324,8 @@ public class CLTmpActExempt {
 			temp.setMobileNo(resultSet.getString("MOBILE_NO"));
 			temp.setMode(resultSet.getString("MODE"));
 			temp.setEffectiveDate(
-					Utility.convertDateToString(resultSet.getDate("EFFECTIVE_DATE"), "ddMMyyyy_HHmmss"));
-			temp.setExpireDate(Utility.convertDateToString(resultSet.getDate("EXPIRED_DATE"), "ddMMyyyy_HHmmss"));
+					Utility.convertDateToString(resultSet.getTimestamp("EFFECTIVE_DATE"), "ddMMyyyy_HHmmss"));
+			temp.setExpireDate(Utility.convertDateToString(resultSet.getTimestamp("EXPIRED_DATE"), "ddMMyyyy_HHmmss"));
 			response.getResponse().add(temp);
 		}
 
