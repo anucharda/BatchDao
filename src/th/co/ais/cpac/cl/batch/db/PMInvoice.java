@@ -75,7 +75,7 @@ public class PMInvoice {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT").append(ConstantsDB.END_LINE);
 			sql.append(" INVOICE_ID ").append(ConstantsDB.END_LINE);
-			sql.append(" PMDB..PM_INVOICE ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM PMDB..PM_INVOICE ").append(ConstantsDB.END_LINE);
 			sql.append(" WHERE INVOICE_NUM = ('").append(invoiceNum).append("') ")
 					.append(ConstantsDB.END_LINE);
 			return sql;
@@ -139,7 +139,7 @@ public class PMInvoice {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT").append(ConstantsDB.END_LINE);
 			sql.append(" INVOICE_NUM ").append(ConstantsDB.END_LINE);
-			sql.append(" PMDB..PM_INVOICE ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM PMDB..PM_INVOICE ").append(ConstantsDB.END_LINE);
 			sql.append(" WHERE BA_NO = ('").append(baNo).append("') ") .append(ConstantsDB.END_LINE);
 			sql.append(" AND INVOICE_TOTAL_BAL > 0 ").append(ConstantsDB.END_LINE);
 			return sql;

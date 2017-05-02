@@ -37,7 +37,7 @@ public class PMBatchAdjDtl {
 		}
 
 		private BigDecimal invoiceID;
-		private BigDecimal batchDtlID;
+		private BigDecimal reqDtlID;
 		public BigDecimal getInvoiceID() {
 			return invoiceID;
 		}
@@ -46,12 +46,12 @@ public class PMBatchAdjDtl {
 			this.invoiceID = invoiceID;
 		}
 
-		public BigDecimal getBatchDtlID() {
-			return batchDtlID;
+		public BigDecimal getReqDtlID() {
+			return reqDtlID;
 		}
 
-		public void setBatchDtlID(BigDecimal batchDtlID) {
-			this.batchDtlID = batchDtlID;
+		public void setReqDtlID(BigDecimal reqDtlID) {
+			this.reqDtlID = reqDtlID;
 		}
 
 	}
@@ -82,18 +82,18 @@ public class PMBatchAdjDtl {
 		protected StringBuilder createSqlProcess() {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT").append(ConstantsDB.END_LINE);
-			sql.append(" BATCH_DTL_ID ").append(ConstantsDB.END_LINE);
-			sql.append(" PMDB..PM_BATCH_ADJ_DTL ").append(ConstantsDB.END_LINE);
+			sql.append(" REQ_DTL_ID ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM PMDB..PM_ADJ_DTL ").append(ConstantsDB.END_LINE);
 			sql.append(" WHERE INVOICE_ID = ").append(invoiceID).append(ConstantsDB.END_LINE);
-			sql.append(" AND REQ_NON_VAT_AMT + REQ_NET_VAT_AMT + REQ_VAT_AMT = ").append(amount).append(ConstantsDB.END_LINE);
-			sql.append(" AND AND ADJ_STATUS  = ").append(adjStatus).append(ConstantsDB.END_LINE);
+			sql.append(" AND REQ_NON_VAT_AMT + REQ_NET_VAT_AMT = ").append(amount).append(ConstantsDB.END_LINE);
+			sql.append(" AND ADJ_STATUS  = '").append(adjStatus).append("'").append(ConstantsDB.END_LINE);
 			return sql;
 		}
 
 		@Override
 		protected void setReturnValue(ResultSet resultSet) throws SQLException {
 			PMBatchAdjDtlInfo temp = new PMBatchAdjDtlInfo();
-			temp.setBatchDtlID(resultSet.getBigDecimal("BATCH_DTL_ID"));
+			temp.setReqDtlID(resultSet.getBigDecimal("REQ_DTL_ID"));
 			response.getResponse().add(temp);
 		}
 

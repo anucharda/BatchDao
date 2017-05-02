@@ -113,9 +113,9 @@ public class CLWaive {
 		protected StringBuilder createSqlProcess() {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT").append(ConstantsDB.END_LINE);
-			sql.append(" SELECT A.WAIVE_ID, A.BA_NO, A.BATCH_ID, B.TREATMENT_ID ").append(ConstantsDB.END_LINE);
-			sql.append(" FROM dbo.CL_WAIVE A a ").append(ConstantsDB.END_LINE);
-			sql.append(" INNER JOIN dbo.CL_WAIVE_TREATMEMT b ").append(ConstantsDB.END_LINE);
+			sql.append(" A.WAIVE_ID, A.BA_NO, A.BATCH_ID, B.TREATMENT_ID ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM dbo.CL_WAIVE A ").append(ConstantsDB.END_LINE);
+			sql.append(" INNER JOIN dbo.CL_WAIVE_TREATMENT B ").append(ConstantsDB.END_LINE);
 			sql.append(" ON A.WAIVE_ID = B.WAIVE_ID ").append(ConstantsDB.END_LINE);
 			sql.append(" WHERE A.BA_NO  = ('").append(baNo).append("') ").append(ConstantsDB.END_LINE);
 			sql.append(" and A.ACTION_STATUS = (").append(actStatus).append(")").append(ConstantsDB.END_LINE);
@@ -191,7 +191,7 @@ public class CLWaive {
 			if (failReason != null) {
 				sql.append(", ACTION_REMARK = '").append(failReason).append("'").append(ConstantsDB.END_LINE);
 			}
-			sql.append(",PM_BATCH_ADJ_DTL_ID = ").append(batchAdjID).append(ConstantsDB.END_LINE);
+			sql.append(",PM_ADJ_DTL_ID = ").append(batchAdjID).append(ConstantsDB.END_LINE);
 
 			sql.append(" WHERE BA_NO   = '").append(baNo).append("'").append(ConstantsDB.END_LINE);
 			sql.append(" AND BATCH_ID  = ").append(batchID).append(ConstantsDB.END_LINE);
@@ -258,7 +258,7 @@ public class CLWaive {
 			StringBuilder sql = new StringBuilder();
 			sql.append(" SELECT").append(ConstantsDB.END_LINE);
 			sql.append(" TREATMENT_ID,BA_NO,BATCH_ID,ACTION_STATUS ").append(ConstantsDB.END_LINE);
-			sql.append(" FROM CL_WAIVE_TREATMEMT a ").append(ConstantsDB.END_LINE);
+			sql.append(" FROM CL_WAIVE_TREATMENT a ").append(ConstantsDB.END_LINE);
 			sql.append(" INNER JOIN dbo.CL_WAIVE  b ").append(ConstantsDB.END_LINE);
 			sql.append(" ON a.WAIVE_ID =b.WAIVE_ID  ").append(ConstantsDB.END_LINE);
 			sql.append(" WHERE TREATMENT_ID = (").append(treatmentID).append(")").append(ConstantsDB.END_LINE);
