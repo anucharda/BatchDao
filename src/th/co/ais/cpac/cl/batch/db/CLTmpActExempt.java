@@ -191,7 +191,11 @@ public class CLTmpActExempt {
 			sql.append("AND E.EXEMPT_LEVEL = 4 ").append(ConstantsDB.END_LINE);
 			sql.append(
 					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
-					.append(batchTypeId).append(")").append(ConstantsDB.END_LINE);
+					.append(batchTypeId).append(") ").append(ConstantsDB.END_LINE);
+			//Check Expire Date
+			sql.append(
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM),112)=CONVERT(varchar(8),getdate(),112) ").append(ConstantsDB.END_LINE);
+			
 			sql.append(" UNION ").append(ConstantsDB.END_LINE);
 			sql.append("SELECT  ").append(ConstantsDB.END_LINE);
 			sql.append("E.EXEMPT_CUSTOMER_ID, E.BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(E.BA_NO) AS MOBILE_NO, ").append(ConstantsDB.END_LINE);
@@ -212,7 +216,11 @@ public class CLTmpActExempt {
 			sql.append("AND E.EXEMPT_LEVEL = 3 ").append(ConstantsDB.END_LINE);
 			sql.append(
 					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
-					.append(batchTypeId).append(")").append(ConstantsDB.END_LINE);
+					.append(batchTypeId).append(")" ).append(ConstantsDB.END_LINE);
+			//Check Expire Date
+			sql.append(
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM),112)=CONVERT(varchar(8),getdate(),112) ").append(ConstantsDB.END_LINE);
+
 			sql.append(" UNION ");
 			sql.append(
 					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,").append(ConstantsDB.END_LINE);
@@ -234,6 +242,10 @@ public class CLTmpActExempt {
 			sql.append(
 					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
 					.append(batchTypeId).append(")").append(ConstantsDB.END_LINE);
+			//Check Expire Date
+			sql.append(
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM),112)=CONVERT(varchar(8),getdate(),112) ").append(ConstantsDB.END_LINE);
+
 			sql.append(" UNION ").append(ConstantsDB.END_LINE);
 			sql.append(
 					"SELECT E.EXEMPT_CUSTOMER_ID, B.BA_NO AS BA_NO, dbo.CL_F_GET_MOBILE_REF_BY_BA(B.BA_NO) AS MOBILE_NO,").append(ConstantsDB.END_LINE);
@@ -254,7 +266,10 @@ public class CLTmpActExempt {
 			sql.append("AND E.EXEMPT_LEVEL = 1 ").append(ConstantsDB.END_LINE);
 			sql.append(
 					"AND NOT EXISTS (SELECT * FROM CL_BATCH_EXEMPT BE, CL_BATCH B WHERE BE.BATCH_ID = B.BATCH_ID AND BE.EXEMPT_CUSTOMER_ID = E.EXEMPT_CUSTOMER_ID AND B.BATCH_TYPE_ID =")
-					.append(batchTypeId).append(")").append(ConstantsDB.END_LINE);
+					.append(batchTypeId).append(") ").append(ConstantsDB.END_LINE);
+			sql.append(
+					"AND CONVERT(varchar(8),ISNULL(E.EXEMPT_EXPIRE_DTM, E.EXEMPT_END_DTM),112)=CONVERT(varchar(8),getdate(),112) ").append(ConstantsDB.END_LINE);
+
 			return sql;
 		}
 
@@ -324,8 +339,8 @@ public class CLTmpActExempt {
 			temp.setMobileNo(resultSet.getString("MOBILE_NO"));
 			temp.setMode(resultSet.getString("MODE"));
 			temp.setEffectiveDate(
-					Utility.convertDateToString(resultSet.getTimestamp("EFFECTIVE_DATE"), "ddMMyyyy_HHmmss"));
-			temp.setExpireDate(Utility.convertDateToString(resultSet.getTimestamp("EXPIRED_DATE"), "ddMMyyyy_HHmmss"));
+					Utility.convertDateToString(resultSet.getTimestamp("EFFECTIVE_DATE"), "yyyyMMdd_HHmmss"));
+			temp.setExpireDate(Utility.convertDateToString(resultSet.getTimestamp("EXPIRED_DATE"), "yyyyMMdd_HHmmss"));
 			response.getResponse().add(temp);
 		}
 
